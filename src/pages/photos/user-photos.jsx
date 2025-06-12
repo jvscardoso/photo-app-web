@@ -3,36 +3,47 @@ import CustomBreadcrumbs from "../../components/custom-breadcrumbs/index.js"
 import {getResponseError} from "../../utils/api-helper.js"
 import {useSnackbar} from "notistack"
 import api from "../../utils/axios.js"
-import {useNavigate, useParams} from "react-router-dom"
-import {Backdrop, Box, Button, CircularProgress, Container, DialogActions, Typography} from '@mui/material'
+import {useParams} from "react-router-dom"
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Container, Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography
+} from '@mui/material'
 import PhotoCard from "../../components/photo-card/index"
 import {useAuth} from "../../contexts/auth/use-auth"
 import ConfirmDialog from "../../components/confirmation-dialog/index.jsx";
 import Render from "../../components/conditional/Render/index.jsx";
+import Iconify from "../../components/iconify/index.js";
+import PhotoForm from "../../components/photo-form/index.jsx";
 
-const UserProfilePage = () => {
+const UserPhotosPage = ({userId}) => {
   const {enqueueSnackbar} = useSnackbar()
   const {id} = useParams()
   const {user} = useAuth()
-  const navigate = useNavigate()
 
   const [userPhotos, setUserPhotos] = useState([])
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedPhotoId, setSelectedPhotoId] = useState(null)
-
+  const [photoDialog, setPhotoDialog] = useState(false)
 
   const fetchPhotos = useCallback(async () => {
     setIsLoading(true)
     try {
-      const response = await api.get(`/photos/user-photos/${id}`)
+      const response = await api.get(`/photos/user-photos/${userId ?? id}`)
       setUserPhotos(response.data)
     } catch (error) {
       enqueueSnackbar(getResponseError(error), {variant: 'error'})
     } finally {
       setIsLoading(false)
     }
-  }, [enqueueSnackbar, id])
+  }, [enqueueSnackbar, id, userId])
 
   const handleDeletePhoto = async (photoId) => {
     setIsLoading(true)
@@ -47,34 +58,53 @@ const UserProfilePage = () => {
     }
   }
 
+  const handleSuccess = () => {
+    setPhotoDialog(false)
+    fetchPhotos()
+  }
+
   useEffect(() => {
     fetchPhotos()
   }, [fetchPhotos])
 
   return (
     <Container sx={{p: 3}}>
-      <CustomBreadcrumbs
-        backButton
-        heading={userPhotos[0]?.photographer || 'Back to home'}
-        links={[{name: 'Home', href: '/'}, {name: 'User Photos'}]}
-        sx={{my: {xs: 3, md: 5}}}
-      />
+      <Render if={!userId}>
+        <CustomBreadcrumbs
+          backButton
+          heading={userPhotos[0]?.photographer || 'Back to home'}
+          links={[{name: 'Home', href: '/'}, {name: 'User Photos'}]}
+          sx={{my: {xs: 3, md: 5}}}
+        />
 
-      <Backdrop open={isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
+        <Backdrop open={isLoading}>
+          <CircularProgress color="inherit"/>
+        </Backdrop>
 
-      <Render if={!isLoading && userPhotos.length === 0}>
-        <Typography variant="h1" color="primary" gutterBottom>
-          Sorry
-        </Typography>
-        <Typography variant="h5" gutterBottom>
-          This user does not have any photos.
-        </Typography>
-        <Typography variant="body1" sx={{mb: 4}}>
-          Go back to the home back to discover amazing photographers.
-        </Typography>
+        <Render if={!isLoading && userPhotos.length === 0}>
+          <Typography variant="h1" color="primary" gutterBottom>
+            Sorry
+          </Typography>
+          <Typography variant="h5" gutterBottom>
+            This user does not have any photos.
+          </Typography>
+          <Typography variant="body1" sx={{mb: 4}}>
+            Go back to the home back to discover amazing photographers.
+          </Typography>
+        </Render>
+      </Render>
 
+      <Render if={userId && userPhotos.length === 0}>
+        <Typography variant="h4" gutterBottom>
+          Look's like you don't have any photos yet.
+        </Typography>
+        <Button
+          variant='contained'
+          onClick={() => setPhotoDialog(true)}
+          endIcon={<Iconify icon="solar:camera-bold-duotone"/>}
+        >
+          Create your photo
+        </Button>
       </Render>
 
       <Render if={!isLoading && userPhotos.length > 0}>
@@ -131,8 +161,16 @@ const UserProfilePage = () => {
         }
         showCancelButton={false}
       />
+
+      <Dialog open={photoDialog} onClose={() => setPhotoDialog(false)} fullWidth>
+        <DialogTitle> Add new photo </DialogTitle>
+        <DialogContent>
+          <PhotoForm onCancel={() => setPhotoDialog(false)} onSuccess={handleSuccess}/>
+        </DialogContent>
+      </Dialog>
+
     </Container>
   )
 }
 
-export default UserProfilePage
+export default UserPhotosPage

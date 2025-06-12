@@ -6,6 +6,7 @@ import {LoadingScreen} from "../components/loading-screen/index";
 import MainLayout from "../layouts/main-layout";
 import photosRoutes from "./photos.jsx";
 import {PATH_AFTER_LOGIN} from "../config-global.js";
+import profileRoutes from "./profile.jsx";
 
 export default function Router() {
   const routes = useRoutes([
@@ -23,6 +24,8 @@ export default function Router() {
     ...authRoutes,
 
     ...photosRoutes,
+
+    ...profileRoutes,
 
     {path: '*', element: <NotFoundPage/>}
   ])

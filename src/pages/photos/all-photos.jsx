@@ -26,11 +26,16 @@ const AllPhotosPage = () => {
     }
   }, [enqueueSnackbar])
 
+  const handleSuccess = () => {
+    setPhotoDialog(false)
+    fetchPhotos()
+  }
+
   useEffect(() => {
     fetchPhotos()
   }, [fetchPhotos])
 
-  const newUserButton = (
+  const newPhotoButton = (
     <Button
       variant='contained'
       onClick={() => setPhotoDialog(true)}
@@ -54,8 +59,8 @@ const AllPhotosPage = () => {
           sx={{
             my: {xs: 3, md: 5}
           }}
-          action={newUserButton}
-          mobileActions={newUserButton}
+          action={newPhotoButton}
+          mobileActions={newPhotoButton}
         />
 
         <Box display="flex" flexDirection="column" gap={2}>
@@ -71,7 +76,7 @@ const AllPhotosPage = () => {
         <Dialog open={photoDialog} onClose={() => setPhotoDialog(false)} fullWidth>
           <DialogTitle> Add new photo </DialogTitle>
           <DialogContent>
-            <PhotoForm onCancel={() => setPhotoDialog(false)} onSuccess={fetchPhotos}/>
+            <PhotoForm onCancel={() => setPhotoDialog(false)} onSuccess={handleSuccess}/>
           </DialogContent>
         </Dialog>
     </Container>
