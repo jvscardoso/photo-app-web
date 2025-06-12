@@ -12,7 +12,6 @@ import {
 } from '@mui/material'
 import {format, parseISO} from 'date-fns'
 import {ROLE_LABELS} from '../../utils/user-enums'
-import {useAuth} from '../../contexts/auth/use-auth'
 import api from '../../utils/axios'
 import {useSnackbar} from 'notistack'
 import {getResponseError} from '../../utils/api-helper'
