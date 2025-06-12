@@ -49,7 +49,7 @@ const UserPhotosPage = ({userId}) => {
     setIsLoading(true)
     try {
       await api.delete(`/photos/${photoId}`)
-      enqueueSnackbar('Foto excluída com sucesso', {variant: 'success'})
+      enqueueSnackbar('Photo deleted successfully', {variant: 'success'})
       fetchPhotos()
     } catch (error) {
       enqueueSnackbar(getResponseError(error), {variant: 'error'})

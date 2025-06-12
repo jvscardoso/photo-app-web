@@ -37,7 +37,7 @@ export default function Header() {
                 color="secondary"
                 onClick={handleLogout}
               >
-                Sair
+                Logout
               </Button>
             ) : (
               <IconButton onClick={handleLogout}>
@@ -54,7 +54,6 @@ export default function Header() {
             Login
           </Button>
         )}
-
       </Toolbar>
     </AppBar>
   )
