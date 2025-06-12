@@ -1,68 +1,64 @@
-import React, {useState} from 'react'
-import {Box, Typography, Avatar, Link, IconButton} from '@mui/material'
-import Iconify from '../iconify'
-import api from '../../utils/axios'
-import {useSnackbar} from 'notistack'
-import {getResponseError} from '../../utils/api-helper'
+import React from 'react'
+import {Card, CardContent, Typography, Box, Button} from '@mui/material'
+import {format} from 'date-fns'
+import Iconify from "../iconify/index.js";
+import Stack from "@mui/material/Stack";
 
-const PhotoCard = ({photo}) => {
-  const [liked, setLiked] = useState(photo.liked_by_user)
-  const {enqueueSnackbar} = useSnackbar()
-
-  const handleToggleLike = async () => {
-    try {
-      await api.post(`/photos/${photo.id}/like`)
-      setLiked(prev => !prev)
-    } catch (error) {
-      enqueueSnackbar(getResponseError(error), {variant: 'error'})
-    }
-  }
+const PhotoCard = ({photo, onDelete, showDeleteButton}) => {
+  const formattedDate = format(new Date(photo.created_at), 'dd/MM/yyyy')
 
   return (
-    <Box display="flex" alignItems="center" p={1}>
-      <IconButton size="small" onClick={handleToggleLike}>
-        <Iconify icon={liked ? 'solar:star-bold' : 'solar:star-linear'}/>
-      </IconButton>
-
-      <Avatar
-        variant="rounded"
-        src={photo.url || undefined}
+    <Card
+      sx={{
+        width: 250,
+        bgcolor: '#fff',
+        boxShadow: 6,
+        borderRadius: '12px',
+        p: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        fontFamily: 'monospace',
+        position: 'relative'
+      }}
+    >
+      <Box
+        component="img"
+        src={photo.src_original}
         alt={photo.alt}
-        sx={{width: 48, height: 48, bgcolor: '#eee', mx: 1}}
+        sx={{
+          width: '100%',
+          height: 300,
+          objectFit: 'cover',
+          borderRadius: '8px',
+          mb: 1,
+        }}
       />
 
-      <Box flex={1}>
-        <Typography fontWeight="bold" fontSize="0.95rem">
-          {photo?.photographer}
+      <CardContent sx={{textAlign: 'center', pt: 0}}>
+        <Typography variant="subtitle2" color="text.primary" gutterBottom noWrap>
+          {photo.alt}
         </Typography>
-        <Typography fontSize="0.85rem">{photo.alt}</Typography>
-        <Box display="flex" alignItems="center" gap={0.5}>
-          <Typography fontSize="0.85rem" color="green">
-            {photo.avg_color}
-          </Typography>
-          <Box
-            sx={{
-              width: 12,
-              height: 12,
-              border: '1px solid #ccc',
-              backgroundColor: photo.avg_color,
-              borderRadius: 0.5
-            }}
-          />
-        </Box>
-      </Box>
 
-      <Link
-        href={photo.photographer_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        fontSize="0.8rem"
-        underline="hover"
-        sx={{whiteSpace: 'nowrap', ml: 2}}
-      >
-        Portfolio
-      </Link>
-    </Box>
+        <Typography variant="caption" color="text.secondary">
+          {formattedDate}
+        </Typography>
+
+        <Stack direction="row" sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1}}>
+          <Iconify icon='solar:star-linear'/>
+          <Typography variant="caption">{photo.likes} Likes</Typography>
+        </Stack>
+
+        {showDeleteButton && (
+          <Button
+            onClick={() => onDelete(photo.id)}
+            startIcon={<Iconify icon="solar:trash-bin-trash-bold"/>}
+          >
+            Delete
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 

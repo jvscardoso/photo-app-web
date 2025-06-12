@@ -5,13 +5,15 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import LinkItem from './link-item'
+import Iconify from "../iconify/index.js";
+import {IconButton} from "@mui/material";
 
 export default function CustomBreadcrumbs({
                                             links = [],
                                             action,
                                             mobileActions,
                                             heading,
-                                            iconButton,
+                                            backButton,
                                             moreLink,
                                             activeLast,
                                             sx,
@@ -20,13 +22,21 @@ export default function CustomBreadcrumbs({
   const isMobile = (window.innerWidth < 600)
   const lastLink = links.length ? links[links.length - 1].name : ''
 
+  const handleGoBack = () => {
+    window.history.back()
+  }
+
   return (
     <Box sx={{...sx}}>
       <Stack direction="row" alignItems="center">
         <Box sx={{flexGrow: 1}}>
           {heading && (
             <Stack direction="row">
-              {iconButton}
+              {backButton && (
+                <IconButton onClick={handleGoBack}>
+                  <Iconify icon="eva:arrow-ios-back-fill" width={24}/>
+                </IconButton>
+              )}
               <Typography variant="h4" gutterBottom>
                 {heading}
               </Typography>
@@ -78,7 +88,7 @@ CustomBreadcrumbs.propTypes = {
   sx: PropTypes.object,
   action: PropTypes.node,
   mobileActions: PropTypes.node,
-  iconButton: PropTypes.node,
+  backButton: PropTypes.bool,
   links: PropTypes.array,
   heading: PropTypes.string,
   moreLink: PropTypes.array,

@@ -67,7 +67,7 @@ const DailyPhotoPage = () => {
               }}
             >
               <img
-                src={photo?.url}
+                src={photo?.src_original}
                 alt={photo.alt}
                 style={{width: '100%', height: '100%', objectFit: 'cover'}}
               />
@@ -75,7 +75,7 @@ const DailyPhotoPage = () => {
 
             <Paper elevation={3} sx={{p: 2, maxWidth: 400, width: '100%'}}>
               <Typography variant="subtitle1">
-                <strong>Alt:</strong> {photo.alt}
+                <strong>Description:</strong> {photo.alt}
               </Typography>
               <Typography variant="subtitle1">
                 <strong>Photographer:</strong>{' '}
