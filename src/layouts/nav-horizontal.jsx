@@ -20,7 +20,6 @@ export default function NavHorizontal() {
       <Tabs
         value={currentTab}
         onChange={(e, value) => navigate(value)}
-        variant="scrollable"
         scrollButtons="auto"
         centered
       >

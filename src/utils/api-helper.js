@@ -32,14 +32,14 @@ export function getResponseError(error, defaultMessage) {
   }
 
   const defaults = {
-    401: 'Você precisa fazer auth',
-    422: 'Verifique os dados e tente novamente',
-    403: 'Você não possui permissão para usar este recurso',
-    0: 'Verifique sua conexão com a internet',
+    401: 'Unauthenticated',
+    422: 'Check request and try again',
+    403: 'User does not have permission to access',
+    0: 'No internet connection',
   }
 
   defaultMessage =
-    defaults[error.response?.status] || defaultMessage || 'Tente novamente em alguns instantes'
+    defaults[error.response?.status] || defaultMessage || 'Try again later'
 
   const messages = error.response?.data?.error || error.message
   if (typeof messages === 'string') {
